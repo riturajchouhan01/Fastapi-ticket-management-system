@@ -1,0 +1,385 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ticket Management System</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <h2>🎫 TicketDesk</h2>
+
+        <nav>
+
+            <a id="dashboardMenu"
+               class="active"
+               onclick="showPage('dashboard')">
+                🏠 Dashboard
+            </a>
+
+            <a id="ticketsMenu"
+               onclick="showPage('tickets')">
+                🎫 Tickets
+            </a>
+
+            <a id="settingsMenu"
+               onclick="showPage('settings')">
+                ⚙️ Settings
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <section id="dashboardPage">
+
+            <header>
+
+                <div>
+                    <h1>Dashboard</h1>
+
+                    <p>
+                        Manage and track your support tickets
+                    </p>
+                </div>
+
+                <button
+                    onclick="openTicketForm()"
+                    class="create-btn">
+
+                    + Create Ticket
+
+                </button>
+
+            </header>
+
+
+            <!-- STATISTICS -->
+
+            <section class="stats">
+
+                <div class="stat-card">
+                    <div>
+                        <p>Total Tickets</p>
+                        <h2 id="totalTickets">0</h2>
+                    </div>
+
+                    <span>🎫</span>
+                </div>
+
+
+                <div class="stat-card">
+                    <div>
+                        <p>Open</p>
+                        <h2 id="openTickets">0</h2>
+                    </div>
+
+                    <span>🟢</span>
+                </div>
+
+
+                <div class="stat-card">
+                    <div>
+                        <p>In Progress</p>
+                        <h2 id="progressTickets">0</h2>
+                    </div>
+
+                    <span>🟡</span>
+                </div>
+
+
+                <div class="stat-card">
+                    <div>
+                        <p>Closed</p>
+                        <h2 id="closedTickets">0</h2>
+                    </div>
+
+                    <span>🔴</span>
+                </div>
+
+            </section>
+
+
+            <!-- RECENT TICKETS -->
+
+            <section class="ticket-section">
+
+                <div class="section-header">
+
+                    <h2>Recent Tickets</h2>
+
+                    <button
+                        onclick="showPage('tickets')"
+                        class="view-btn">
+
+                        View All
+
+                    </button>
+
+                </div>
+
+                <div id="recentTickets"></div>
+
+            </section>
+
+        </section>
+
+
+
+        <!-- ================= TICKETS ================= -->
+
+        <section id="ticketsPage" class="hidden">
+
+            <header>
+
+                <div>
+                    <h1>Tickets</h1>
+
+                    <p>
+                        View and manage all tickets
+                    </p>
+                </div>
+
+                <button
+                    onclick="openTicketForm()"
+                    class="create-btn">
+
+                    + Create Ticket
+
+                </button>
+
+            </header>
+
+
+            <section class="ticket-section">
+
+                <div class="section-header">
+
+                    <h2>All Tickets</h2>
+
+                    <div class="filters">
+
+                        <input
+                            type="text"
+                            id="search"
+                            placeholder="Search tickets..."
+                            onkeyup="displayTickets()">
+
+
+                        <select
+                            id="statusFilter"
+                            onchange="displayTickets()">
+
+                            <option value="All">
+                                All
+                            </option>
+
+                            <option value="Open">
+                                Open
+                            </option>
+
+                            <option value="In Progress">
+                                In Progress
+                            </option>
+
+                            <option value="Closed">
+                                Closed
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div id="ticketContainer"></div>
+
+            </section>
+
+        </section>
+
+
+
+        <!-- ================= SETTINGS ================= -->
+
+        <section id="settingsPage" class="hidden">
+
+            <header>
+
+                <div>
+                    <h1>Settings</h1>
+
+                    <p>
+                        Manage your application settings
+                    </p>
+                </div>
+
+            </header>
+
+
+            <section class="settings-card">
+
+                <h2>Application Settings</h2>
+
+                <div class="setting-row">
+
+                    <div>
+                        <h3>Email Notifications</h3>
+
+                        <p>
+                            Receive notifications for ticket updates
+                        </p>
+                    </div>
+
+                    <input
+                        type="checkbox"
+                        checked>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <div>
+                        <h3>Auto Refresh</h3>
+
+                        <p>
+                            Automatically refresh ticket data
+                        </p>
+                    </div>
+
+                    <input
+                        type="checkbox">
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <div>
+                        <h3>Application Version</h3>
+
+                        <p>
+                            TicketDesk v1.0
+                        </p>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+
+<!-- ================= CREATE TICKET MODAL ================= -->
+
+<div
+    id="ticketModal"
+    class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>Create New Ticket</h2>
+
+            <button onclick="closeTicketForm()">
+                ×
+            </button>
+
+        </div>
+
+
+        <form onsubmit="createTicket(event)">
+
+            <label>Title</label>
+
+            <input
+                type="text"
+                id="title"
+                placeholder="Enter ticket title"
+                required>
+
+
+            <label>Description</label>
+
+            <textarea
+                id="description"
+                placeholder="Describe the problem..."
+                required>
+            </textarea>
+
+
+            <label>Category</label>
+
+            <select id="category">
+
+                <option>General</option>
+
+                <option>Technical</option>
+
+                <option>Billing</option>
+
+                <option>Account</option>
+
+            </select>
+
+
+            <label>Priority</label>
+
+            <select id="priority">
+
+                <option>Low</option>
+
+                <option selected>Medium</option>
+
+                <option>High</option>
+
+            </select>
+
+
+            <button
+                type="submit"
+                class="submit-btn">
+
+                Create Ticket
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
+```
